@@ -85,12 +85,12 @@ namespace RadiusParserLogs
                //List<Events> events = new List<Events>();
                RadiusParserLogs.Events events = new Events();
 
-               if (evnt.Elements("Reason-Code").Any()) events.reasonCode = evnt.Element("Reason-Code").Value;
-               if (evnt.Elements("Timestamp").Any()) events.timestamp = evnt.Element("Timestamp").Value;
-               if (evnt.Elements("NAS-IP-Address").Any()) events.nasIpAddress = evnt.Element("NAS-IP-Address").Value;
-               if (evnt.Elements("Client-Friendly-Name").Any()) events.clientFriendlyName = evnt.Element("Client-Friendly-Name").Value;
-               if (evnt.Elements("User-Name").Any()) events.userName = evnt.Element("User-Name").Value;
-               if (evnt.Elements("NP-Policy-Name").Any()) events.npPolicyName = evnt.Element("NP-Policy-Name").Value;
+               events.reasonCode = evnt.Element("Reason-Code")?.Value;
+               events.timestamp = evnt.Element("Timestamp")?.Value;
+               events.nasIpAddress = evnt.Element("NAS-IP-Address")?.Value;
+               events.clientFriendlyName = evnt.Element("Client-Friendly-Name")?.Value;
+               events.userName = evnt.Element("User-Name")?.Value;
+               events.npPolicyName = evnt.Element("NP-Policy-Name")?.Value;
                ListViewItem item = new ListViewItem(new string[]
                {
                   events.reasonCode,
