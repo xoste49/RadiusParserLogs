@@ -108,7 +108,6 @@ namespace RadiusParserLogs
                if(events.reasonCode=="0") item.BackColor = Color.LightGreen;
                if(events.reasonCode=="16") item.BackColor = Color.IndianRed;
 
-               //item.BackColor = requests[classID].getRowColor();
                lv.Items.Add(item);
 
                //this.Invoke(new MethodInvoker(delegate { lvLogTable.Items.Add(item); }));

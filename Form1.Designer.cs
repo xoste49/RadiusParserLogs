@@ -45,10 +45,15 @@
          // 
          // lv
          // 
+         this.lv.AllowColumnReorder = true;
+         this.lv.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+         this.lv.FullRowSelect = true;
          this.lv.HideSelection = false;
          this.lv.Location = new System.Drawing.Point(13, 42);
          this.lv.Name = "lv";
-         this.lv.Size = new System.Drawing.Size(775, 396);
+         this.lv.Size = new System.Drawing.Size(569, 420);
          this.lv.TabIndex = 1;
          this.lv.UseCompatibleStateImageBehavior = false;
          this.lv.View = System.Windows.Forms.View.Details;
@@ -57,11 +62,12 @@
          // 
          this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
          this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-         this.ClientSize = new System.Drawing.Size(800, 450);
+         this.ClientSize = new System.Drawing.Size(594, 474);
          this.Controls.Add(this.lv);
          this.Controls.Add(this.openbtn);
+         this.MinimumSize = new System.Drawing.Size(610, 490);
          this.Name = "Form1";
-         this.Text = "Form1";
+         this.Text = "RADIUS NPS parser log";
          this.ResumeLayout(false);
 
       }
