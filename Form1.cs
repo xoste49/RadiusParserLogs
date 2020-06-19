@@ -83,7 +83,7 @@ namespace RadiusParserLogs
 
                //requests[classID].setResponce(events);
                //List<Events> events = new List<Events>();
-               RadiusParserLogs.Events events = new Events();
+               Events events = new Events();
 
                events.reasonCode = evnt.Element("Reason-Code")?.Value;
                events.timestamp = evnt.Element("Timestamp")?.Value;
@@ -91,6 +91,10 @@ namespace RadiusParserLogs
                events.clientFriendlyName = evnt.Element("Client-Friendly-Name")?.Value;
                events.userName = evnt.Element("User-Name")?.Value;
                events.npPolicyName = evnt.Element("NP-Policy-Name")?.Value;
+
+               // Фильтрация по Reason-Code 16 и 0
+               if (events.reasonCode != "0" && events.reasonCode != "16") continue;
+
                ListViewItem item = new ListViewItem(new string[]
                {
                   events.reasonCode,
@@ -100,6 +104,9 @@ namespace RadiusParserLogs
                   events.userName,
                   events.npPolicyName
                });
+
+               if(events.reasonCode=="0") item.BackColor = Color.LightGreen;
+               if(events.reasonCode=="16") item.BackColor = Color.IndianRed;
 
                //item.BackColor = requests[classID].getRowColor();
                lv.Items.Add(item);
