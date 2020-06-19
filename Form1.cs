@@ -52,19 +52,10 @@ namespace RadiusParserLogs
          {
             lv.Items.Clear();
 
-            //Directory = Path.GetDirectoryName(ofdFile.FileName);
-            //FileName = Path.GetFileName(ofdFile.FileName);
-
             // Считываем из файла
             using (FileStream stream = File.Open(ofd.FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            {
-               //stream.Seek(currentPosition, SeekOrigin.Begin);
-               using (StreamReader reader = new StreamReader(stream))
-               {
+            using (StreamReader reader = new StreamReader(stream))
                   Lines = reader.ReadToEnd();
-                  //currentPosition = stream.Position;
-               }
-            }
 
             // Парсим лог 
             XDocument xml = XDocument.Parse("<events>" + Lines + "</events>");
@@ -72,17 +63,6 @@ namespace RadiusParserLogs
 
             foreach (var evnt in xml.Descendants("Event"))
             {
-               //classID = evnt.Element("Class").Value;
-
-               //lv.Columns.Add("Reason-Code");
-               //lv.Columns.Add("Timestamp");
-               //lv.Columns.Add("NAS-IP-Address");
-               //lv.Columns.Add("Client-Friendly-Name");
-               //lv.Columns.Add("User-Name");
-               //lv.Columns.Add("NP-Policy-Name");
-
-               //requests[classID].setResponce(events);
-               //List<Events> events = new List<Events>();
                Events events = new Events();
 
                events.reasonCode = evnt.Element("Reason-Code")?.Value;
@@ -109,14 +89,6 @@ namespace RadiusParserLogs
                if(events.reasonCode=="16") item.BackColor = Color.IndianRed;
 
                lv.Items.Add(item);
-
-               //this.Invoke(new MethodInvoker(delegate { lvLogTable.Items.Add(item); }));
-               //if (cbScroll.Checked)
-               //{
-               //   this.Invoke(new MethodInvoker(delegate { lvLogTable.Items[lvLogTable.Items.Count - 1].EnsureVisible(); }));
-               //}
-
-               
             }
             // Авто Размер колонок
             lv.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
