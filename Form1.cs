@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
 
@@ -14,19 +8,7 @@ namespace RadiusParserLogs
 {
    public partial class Form1 : Form
    {
-      /*
-       * Нужная информация при неудачной авторизации (Reason-Code - 16) – 
-         Дата/Время (Timestamp), 
-         IP (NAS-IP-Address),
-         Логин (User-Name).
-         Нужная информация при успешной авторизации (Reason-Code - 0) – 
-         Дата/Время (Timestamp), 
-         IP (NAS-IP-Address), 
-         Клиент (Client-Friendly-Name), 
-         Логин (User-Name), 
-         Политика (NP-Policy-Name)
-       */
-      private string Lines;
+      private string _lines;
 
       public Form1()
       {
@@ -48,52 +30,58 @@ namespace RadiusParserLogs
       private void openbtn_Click(object sender, EventArgs e)
       {
          // Открываем файл
-         if (ofd.ShowDialog() == DialogResult.OK)
+         if (ofd.ShowDialog() != DialogResult.OK) return;
+         lv.Items.Clear();
+
+         // Считываем из файла
+         using (var stream = File.Open(ofd.FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+         using (var reader = new StreamReader(stream))
+            _lines = reader.ReadToEnd();
+
+         // Парсим лог 
+         var xml = XDocument.Parse("<events>" + _lines + "</events>");
+
+         foreach (var evnt in xml.Descendants("Event"))
          {
-            lv.Items.Clear();
-
-            // Считываем из файла
-            using (FileStream stream = File.Open(ofd.FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-            using (StreamReader reader = new StreamReader(stream))
-                  Lines = reader.ReadToEnd();
-
-            // Парсим лог 
-            XDocument xml = XDocument.Parse("<events>" + Lines + "</events>");
-            string classID;
-
-            foreach (var evnt in xml.Descendants("Event"))
+            var events = new Events
             {
-               Events events = new Events();
+               reasonCode = evnt.Element("Reason-Code")?.Value,
+               timestamp = evnt.Element("Timestamp")?.Value,
+               nasIpAddress = evnt.Element("NAS-IP-Address")?.Value,
+               clientFriendlyName = evnt.Element("Client-Friendly-Name")?.Value,
+               userName = evnt.Element("User-Name")?.Value,
+               npPolicyName = evnt.Element("NP-Policy-Name")?.Value
+            };
 
-               events.reasonCode = evnt.Element("Reason-Code")?.Value;
-               events.timestamp = evnt.Element("Timestamp")?.Value;
-               events.nasIpAddress = evnt.Element("NAS-IP-Address")?.Value;
-               events.clientFriendlyName = evnt.Element("Client-Friendly-Name")?.Value;
-               events.userName = evnt.Element("User-Name")?.Value;
-               events.npPolicyName = evnt.Element("NP-Policy-Name")?.Value;
 
-               // Фильтрация по Reason-Code 16 и 0
-               if (events.reasonCode != "0" && events.reasonCode != "16") continue;
+            // Фильтрация по Reason-Code 16 и 0
+            if (events.reasonCode != "0" && events.reasonCode != "16") continue;
 
-               ListViewItem item = new ListViewItem(new string[]
-               {
-                  events.reasonCode,
-                  events.timestamp,
-                  events.nasIpAddress,
-                  events.clientFriendlyName,
-                  events.userName,
-                  events.npPolicyName
-               });
+            var item = new ListViewItem(new string[]
+            {
+               events.reasonCode,
+               events.timestamp,
+               events.nasIpAddress,
+               events.clientFriendlyName,
+               events.userName,
+               events.npPolicyName
+            });
 
-               if(events.reasonCode=="0") item.BackColor = Color.LightGreen;
-               if(events.reasonCode=="16") item.BackColor = Color.IndianRed;
-
-               lv.Items.Add(item);
+            switch (events.reasonCode)
+            {
+               case "0":
+                  item.BackColor = Color.LightGreen;
+                  break;
+               case "16":
+                  item.BackColor = Color.IndianRed;
+                  break;
             }
-            // Авто Размер колонок
-            lv.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
-            lv.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
+
+            lv.Items.Add(item);
          }
+         // Авто Размер колонок
+         lv.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
+         lv.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
       }
    }
 }
